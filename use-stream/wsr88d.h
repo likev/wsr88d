@@ -5,70 +5,28 @@
 #include <string>
 #include <vector>
 
+
+#ifndef _WSR88D_
+#define _WSR88D_
+
 namespace nh {
 
-	auto htons = [](unsigned short h)
-	{
-		return (unsigned short)
-			(h << 8 & 0xFF00U |
-				h >> 8 & 0x00FFU);
-	};
+	unsigned short htons(unsigned short h);
 
-	auto htonl = [](unsigned int h)
-	{
-		return (unsigned int)
-			(h << 24 & 0xFF000000U |
-				h << 8 & 0x00FF0000U |
-				h >> 8 & 0x0000FF00U |
-				h >> 24 & 0x000000FFU);
-	};
+	unsigned int htonl(unsigned int h);
 
-	auto ntohs = htons;
-	auto ntohl = htonl;
+	unsigned short ntohs(unsigned short h);
 
+	unsigned int ntohl(unsigned int h);
 }
 
-void ntoh_struct( unsigned char* pc, const std::vector<unsigned char>& size_of_member)
-{
+void ntoh_struct(unsigned char* pc, const std::vector<unsigned char>& size_of_member);
 
-	for (auto v : size_of_member)
-	{
-		if (v == 2)
-		{
-			unsigned short *p = (unsigned short *)pc;
-			*p = nh::ntohs(*p);
-		}
-		else if (v == 4)
-		{
-			unsigned int *p = (unsigned int *)pc;
-			*p = nh::ntohl(*p);
-		}
-		pc += v;
-	}
-
-}
-
-void cout_struct(unsigned char* pc, const std::vector<unsigned char>& size_of_member)
-{
-	for (auto v : size_of_member)
-	{
-		if (v == 2)
-		{
-			short *p = (short *)pc;
-			std::cout << *p << std::endl;
-		}
-		else if (v == 4)
-		{
-			int *p = (int *)pc;
-			std::cout << *p << std::endl;
-		}
-		pc += v;
-	}
-}
+void cout_struct(unsigned char* pc, const std::vector<unsigned char>& size_of_member);
 
 struct BlockHeader {
 	BLOCKHEADMSG header;
-	
+
 
 	BlockHeader() = default;
 
@@ -90,8 +48,8 @@ struct BlockHeader {
 
 
 private:
-	const std::vector<unsigned char> size_of_header_member{2,2,4,4,2,2,2};
-};	
+	const std::vector<unsigned char> size_of_header_member{ 2,2,4,4,2,2,2 };
+};
 
 struct BlockDescription {
 	BLOCKDESCRIPTION description;
@@ -117,10 +75,10 @@ struct BlockDescription {
 
 
 private:
-	const std::vector<unsigned char> 
-		size_of_description_member =  { 2, 4,4, 2,2,2,2,2,2, 2,4,2,4, 2,2,2,2,
-			2,2,2,2, 2,2,2,2, 2,2,2,2, 2,2,2,2,
-			2,2,2,2,2,2,2, 2,4,4,4 };
+	const std::vector<unsigned char>
+		size_of_description_member = { 2, 4,4, 2,2,2,2,2,2, 2,4,2,4, 2,2,2,2,
+		2,2,2,2, 2,2,2,2, 2,2,2,2, 2,2,2,2,
+		2,2,2,2,2,2,2, 2,4,4,4 };
 };
 
 
@@ -134,7 +92,7 @@ struct BlockSymbol {
 	bool isRadialData = false;
 	bool isGridData = false;
 
-	std::vector<std::vector<unsigned char> > radialColors, gridColors;
+	std::vector<std::vector<signed char> > radialColors, gridColors;
 
 
 	BlockSymbol() = default;
@@ -178,14 +136,14 @@ struct BlockSymbol {
 
 			for (auto it = p.begin(); it < p.end(); it += 2)
 			{
-				std::swap(*it, *(it + 1) );
+				std::swap(*it, *(it + 1));
 			}
 
-			std::vector<unsigned char> colorAngle;
+			std::vector<signed char> colorAngle;
 			for (auto v : p)
 			{
 				unsigned char color = v & 0x0F;
-				unsigned char span = v>>4 & 0x0F;
+				unsigned char span = v >> 4 & 0x0F;
 
 				colorAngle.insert(colorAngle.end(), span, color);
 			}
@@ -221,7 +179,7 @@ struct BlockSymbol {
 				std::swap(*it, *(it + 1));
 			}
 
-			std::vector<unsigned char> colorLine;
+			std::vector<signed char> colorLine;
 			for (auto v : p)
 			{
 				unsigned char color = v & 0x0F;
@@ -229,7 +187,7 @@ struct BlockSymbol {
 
 				colorLine.insert(colorLine.end(), span, color);
 			}
-			
+
 			gridColors[i] = colorLine;
 		}
 	}
@@ -255,7 +213,7 @@ struct BlockSymbol {
 		case 0xAF1F:
 			bs.isRadialData = true;
 			bs.isGridData = false;
-			bs.read_radial(in); 
+			bs.read_radial(in);
 			break;
 		case 0xBA0F:
 		case 0xBA07:
@@ -267,7 +225,7 @@ struct BlockSymbol {
 		default:break;
 		}
 		//
-		
+
 
 		return in;
 	}
@@ -309,7 +267,7 @@ struct BlockSymbol {
 			unsigned count = 0;
 			for (auto line : bs.gridColors)
 			{
-				std::cout << ++count << ' ' ;
+				std::cout << ++count << ' ';
 				for (auto v : line)
 				{
 					std::cout << ' ' << +v;
@@ -318,7 +276,7 @@ struct BlockSymbol {
 			}
 
 		}
-		
+
 
 		return out;
 	}
@@ -333,43 +291,4 @@ private:
 };
 
 
-int main()//wsr88d_
-{
-	std::cout << "sizeof(BLOCKHEADMSG): " << sizeof(BLOCKHEADMSG) << std::endl;
-	std::cout << "sizeof(BLOCKDESCRIPTION) " << sizeof(BLOCKDESCRIPTION) << std::endl;
-
-	static_assert(sizeof(BLOCKHEADMSG) == 18,"error struct BLOCKHEADMSG size");
-	static_assert(sizeof(BLOCKDESCRIPTION) == 102, "error struct BLOCKDESCRIPTION size");
-
-	BlockHeader bh;
-	BlockDescription bd;
-	BlockSymbol bs;
-
-	std::string filename;
-	std::ifstream fin;
-
-	while (std::cout<<"filename: " &&std::cin >> filename)
-	{
-		fin.open(filename, fin.in|fin.binary);
-
-		if ( !fin )
-		{
-			std::cout << "file " << filename << " open fail!" << std::endl;
-			continue;
-		}
-
-		fin >> bh;
-		std::cout << "BlockHeader:\n" << bh;
-
-		fin >> bd;//<< std::hex << std::showbase
-		std::cout  << "BlockDescription:\n" << bd;
-
-		fin >> bs;
-		std::cout << "BlockSymbol:\n" << bs;
-
-
-		fin.close();
-	}
-
-	return 0;
-}
+#endif /* _WSR88D_ */
