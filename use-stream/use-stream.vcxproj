@@ -140,11 +140,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="outpng-main.cpp" />
     <ClCompile Include="stream-main.cpp" />
-    <ClCompile Include="wsr88d-main.cpp" />
+    <ClCompile Include="wsr88d.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="wsr88d-structs.h" />
+    <ClInclude Include="wsr88d.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -14,7 +14,8 @@ struct MaxRange
 };
 
 template<typename T1, typename T2>
-MaxRange<T1> max_sum_subarray(const std::vector<T2> & arr) {
+MaxRange<T1> max_sum_subarray(const std::vector<T2> & arr) 
+{
 	T1 endsum = 0;
 
 	MaxRange<T1> range;
@@ -47,12 +48,14 @@ MaxRange<T1> max_sum_subarray(const std::vector<T2> & arr) {
 }
 
 template<typename T>
-MaxRange<int> max_sum_subarray(const std::vector<T> & arr) {
+MaxRange<int> max_sum_subarray(const std::vector<T> & arr) 
+{
 	return max_sum_subarray<int, T>(arr);
 }
 
 template<typename T1, typename T2>
-MaxRange<T1> max_sum_submatrix(const std::vector< std::vector<T2> >& matrix) {
+MaxRange<T1> max_sum_submatrix(const std::vector< std::vector<T2> >& matrix) 
+{
 
 	MaxRange<T1> range;
 

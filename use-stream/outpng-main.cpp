@@ -135,8 +135,9 @@ int main()
 				row = gridLevel.size(), col = gridLevel[0].size(),
 				height = row*scale, width = col*scale;
 
-			CI::CImg<unsigned char> gridPng(width, height, 1, 3);
-			gridPng.fill(0);
+			CI::CImg<unsigned char> gridPng(width, height, 1, 3), gridPng1(col, row, 1, 3);
+			//gridPng.fill(0); 
+			gridPng1.fill(0);
 
 			for (auto y = 0; y < row; y++)
 			{
@@ -149,12 +150,18 @@ int main()
 						if (level > 0)
 						{
 							auto color = getReflectivityColor(level);
-							gridPng.draw_rectangle(x*scale, y*scale, (x+1)*scale, (y+1)*scale, color.data());
+
+							//replace with gridPng1.draw_point and gridPng1.resize
+							//gridPng.draw_rectangle(x*scale, y*scale, (x+1)*scale, (y+1)*scale, color.data());
+
+							gridPng1.draw_point(x, y, color.data(), 1);
 						}
 					
 					}
 				}
 			}
+
+			gridPng1.resize(width, height, 1, 3);
 
 			for(auto& array : gridLevel) //it will modify bs.gridColors
 			{
@@ -166,9 +173,14 @@ int main()
 				<< " top: " << range.top << " bottom: " << range.bottom << std::endl;
 
 			std::vector<unsigned char> blue = { 0, 0, 255 };
-			gridPng.draw_rectangle(range.left*scale, range.top*scale, range.right*scale, range.bottom*scale, blue.data(), 1, ~0U);
-			gridPng.display();
-			gridPng.save((filename + ".png").c_str());
+			
+			//gridPng.draw_rectangle(range.left*scale, range.top*scale, range.right*scale, range.bottom*scale, blue.data(), 1, ~0U);
+			//gridPng.display();
+			//gridPng.save((filename + ".png").c_str());
+
+			gridPng1.draw_rectangle(range.left*scale - 1, range.top*scale - 1, range.right*scale, range.bottom*scale, blue.data(), 1, ~0U);
+			gridPng1.display();
+			gridPng1.save((filename + ".png").c_str());
 		}
 	}
 
