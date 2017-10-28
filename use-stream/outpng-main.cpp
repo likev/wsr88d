@@ -100,6 +100,7 @@ int main()
 
 	std::string filename;
 	std::ifstream fin;
+	std::ofstream fout("recognition.txt");
 
 	while (std::cout << "filename: " &&std::cin >> filename)
 	{
@@ -131,7 +132,7 @@ int main()
 		else if (bs.is_grid())
 		{
 			auto& gridLevel = bs.gridColors;
-			unsigned scale = 4, 
+			unsigned scale = 4,
 				row = gridLevel.size(), col = gridLevel[0].size(),
 				height = row*scale, width = col*scale;
 
@@ -141,12 +142,12 @@ int main()
 
 			for (auto y = 0; y < row; y++)
 			{
-				for(auto x = 0; x < col; x++)
+				for (auto x = 0; x < col; x++)
 				{
 					if (x < gridLevel[y].size())
 					{
 						auto level = gridLevel[y][x];
-					
+
 						if (level > 0)
 						{
 							auto color = getReflectivityColor(level);
@@ -156,31 +157,39 @@ int main()
 
 							gridPng1.draw_point(x, y, color.data(), 1);
 						}
-					
+
 					}
 				}
 			}
 
 			gridPng1.resize(width, height, 1, 3);
 
-			for(auto& array : gridLevel) //it will modify bs.gridColors
+			for (auto& array : gridLevel) //it will modify bs.gridColors
 			{
-				for(auto& v: array) {v -= 10; };
+				for (auto& v : array) { v -= 10; };
 			};
-			
+
 			auto range = max_sum_submatrix(gridLevel);
 			std::cout << "max_add: " << range.value << " left: " << range.left << " right: " << range.right
 				<< " top: " << range.top << " bottom: " << range.bottom << std::endl;
 
 			std::vector<unsigned char> blue = { 0, 0, 255 };
-			
+
 			//gridPng.draw_rectangle(range.left*scale, range.top*scale, range.right*scale, range.bottom*scale, blue.data(), 1, ~0U);
 			//gridPng.display();
 			//gridPng.save((filename + ".png").c_str());
 
 			gridPng1.draw_rectangle(range.left*scale - 1, range.top*scale - 1, range.right*scale, range.bottom*scale, blue.data(), 1, ~0U);
-			gridPng1.display();
-			gridPng1.save((filename + ".png").c_str());
+			//gridPng1.display();
+			gridPng1.save(("result-png/" + filename + ".png").c_str());
+
+			int recognition_width = (range.right - range.left), recognition_height = (range.bottom - range.top);
+			int recognition_area = recognition_width * recognition_height;
+			fout << filename << "    area: " << recognition_area << "    avg-dBZ: " << 43 + range.value*5.0 / recognition_area
+				<< "    center: (" << range.left + recognition_width / 2.0 <<" , "<< range.top + recognition_height/2.0 
+				<< ")    width: " << recognition_width << "    height: " << recognition_height << std::endl;
+		
+		
 		}
 	}
 

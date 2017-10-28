@@ -1,0 +1,6 @@
+37.379    area: 18    avg-dBZ: 45.5    center: (245.5 , 288)    width: 3    height: 6
+37.379    area: 18    avg-dBZ: 45.5    center: (245.5 , 288)    width: 3    height: 6
+37.379    area: 18    avg-dBZ: 45.5    center: (245.5 , 288)    width: 3    height: 6
+37.379    area: 18    avg-dBZ: 45.5    center: (245.5 , 288)    width: 3    height: 6
+37.379    area: 18    avg-dBZ: 45.5    center: (245.5 , 288)    width: 3    height: 6
+37.379    area: 18    avg-dBZ: 45.5    center: (245.5 , 288)    width: 3    height: 6
