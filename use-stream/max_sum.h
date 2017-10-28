@@ -5,18 +5,19 @@
 
 #include <vector>
 #include <algorithm>
+#include <limits>
 
 template<typename T>
 struct MaxRange
 {
 	unsigned left = 0, right = 0, top = 0, bottom = 0;
-	T value = 0;
+	T value = std::numeric_limits<T>::min();
 };
 
 template<typename T1, typename T2>
 MaxRange<T1> max_sum_subarray(const std::vector<T2> & arr) 
 {
-	T1 endsum = 0;
+	T1 endsum = std::numeric_limits<T1>::min();
 
 	MaxRange<T1> range;
 

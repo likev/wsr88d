@@ -111,6 +111,7 @@ int main()
 			std::cout << "file " << filename << " open fail!" << std::endl;
 			continue;
 		}
+		std::cout << "recognize file " << filename << "..." << std::endl;
 
 		fin >> bh;
 		//std::cout << "BlockHeader:\n" << bh;
@@ -132,8 +133,24 @@ int main()
 		else if (bs.is_grid())
 		{
 			auto& gridLevel = bs.gridColors;
+
+			unsigned row = gridLevel.size(), colMax = 0;
+
+			for (auto& array : gridLevel) //it will modify bs.gridColors
+			{
+				colMax = std::max<unsigned>(array.size(), colMax);
+			}
+
+			colMax = std::min<unsigned>(row, colMax); //when some error occur,colMax will very big
+
+			//make sure all rows have the same size
+			for (auto& array : gridLevel) //it will modify bs.gridColors
+			{
+				array.resize(colMax, 0);
+			}
+
 			unsigned scale = 4,
-				row = gridLevel.size(), col = gridLevel[0].size(),
+				 col = gridLevel[0].size(),
 				height = row*scale, width = col*scale;
 
 			CI::CImg<unsigned char> gridPng(width, height, 1, 3), gridPng1(col, row, 1, 3);
