@@ -1,21 +1,28 @@
+const util = require('util');
 const fs = require('fs');
 
+const mkdir = util.promisify(fs.mkdir);
+const readdir = util.promisify(fs.readdir);
 
 //console.log('waiting...');
 
-fs.readdir('./', (err, datedirs)=>{
+let print_dir = async ()=>{
 
-	if (err) throw err;
+	let datedirs = await readdir('./');
+	datedirs.sort();	
 	
-	datedirs.sort();
 	for(let datedir of datedirs){
 		//console.log(datedir);
 		if(/[0-9]{8}/.test(datedir)){
 			//console.log(datedir);
 			
-			fs.mkdir('result-png/'+ datedir, (err, datedirs)=>{});
-			fs.mkdir('result-png/'+ datedir + '/CR', (err, datedirs)=>{});
-			fs.mkdir('result-png/'+ datedir + '/CR/37', (err, datedirs)=>{});
+			try{
+				await mkdir('result-png/'+ datedir);
+				await mkdir('result-png/'+ datedir + '/CR');
+				await mkdir('result-png/'+ datedir + '/CR/37');
+			}catch(error){
+			
+			}
 			
 			let path = datedir + '/CR/37';
 			fs.readdir(path, (err, files)=>{
@@ -31,5 +38,6 @@ fs.readdir('./', (err, datedirs)=>{
 			});
 		}
 	}
+}
 
-})
+print_dir();
